@@ -1,48 +1,60 @@
 workspace(name = "angular_material")
 
+# Add sass rules
+http_archive(
+    name = "io_bazel_rules_sass",
+    url = "https://github.com/bazelbuild/rules_sass/archive/0.1.0.zip",
+    strip_prefix = "rules_sass-0.1.0",
+    sha256 = "b243c4d64f054c174051785862ab079050d90b37a1cef7da93821c6981cb9ad4",
+)
+
 # Add nodejs rules
 http_archive(
-  name = "build_bazel_rules_nodejs",
-  url = "https://github.com/bazelbuild/rules_nodejs/archive/0.8.0.zip",
-  strip_prefix = "rules_nodejs-0.8.0",
-  sha256 = "4e40dd49ae7668d245c3107645f2a138660fcfd975b9310b91eda13f0c973953",
+    name = "build_bazel_rules_nodejs",
+    url = "https://github.com/bazelbuild/rules_nodejs/archive/0.12.4.zip",
+    strip_prefix = "rules_nodejs-0.12.4",
+    sha256 = "c482700e032b4df60425cb9a6f8f28152fb1c4c947a9d61e6132fc59ce332b16",
 )
+
+# Add TypeScript rules
+local_repository(
+    name = "build_bazel_rules_typescript",
+    path = "node_modules/@bazel/typescript",
+)
+
+# Add Angular rules
+http_archive(
+    name = "angular",
+    url = "https://github.com/angular/angular/archive/6.1.7.zip",
+    strip_prefix = "angular-6.1.7",
+    sha256 = "bd6bd47b8b65254da78158b354c4b0ffc18b9591bcc82863e359fc8d3e1cc609",
+)
+
+load("@build_bazel_rules_typescript//:package.bzl", "rules_typescript_dependencies")
+# Install transitive dependencies
+rules_typescript_dependencies()
 
 # NOTE: this rule installs nodejs, npm, and yarn, but does NOT install
 # your npm dependencies. You must still run the package manager.
 load("@build_bazel_rules_nodejs//:defs.bzl", "check_bazel_version", "node_repositories")
 
+# Require users to have a sufficiently modern Bazel installed
 check_bazel_version("0.13.0")
-node_repositories(package_json = ["//:package.json"])
 
-# Add sass rules
-http_archive(
-  name = "io_bazel_rules_sass",
-  url = "https://github.com/bazelbuild/rules_sass/archive/0.1.0.zip",
-  strip_prefix = "rules_sass-0.1.0",
-  sha256 = "b243c4d64f054c174051785862ab079050d90b37a1cef7da93821c6981cb9ad4",
-)
+node_repositories()
 
 load("@io_bazel_rules_sass//sass:sass_repositories.bzl", "sass_repositories")
 sass_repositories()
 
-# Add TypeScript rules
-http_archive(
-  name = "build_bazel_rules_typescript",
-  url = "https://github.com/bazelbuild/rules_typescript/archive/0.12.3.zip",
-  strip_prefix = "rules_typescript-0.12.3",
-  sha256 = "967068c3540f59407716fbeb49949c1600dbf387faeeab3089085784dd21f60c",
-)
-
-# Setup TypeScript Bazel workspace
+# Setup Bazel workspace
 load("@build_bazel_rules_typescript//:defs.bzl", "ts_setup_workspace")
 ts_setup_workspace()
 
-# Add Angular rules
-local_repository(
-  name = "angular",
-  path = "node_modules/@angular/bazel",
-)
+load("@angular//:index.bzl", "ng_setup_workspace")
+ng_setup_workspace()
+
+load("//tools:mat_setup_workspace.bzl", "mat_setup_workspace")
+mat_setup_workspace()
 
 # Add rxjs
 local_repository(

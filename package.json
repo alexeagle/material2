@@ -8,7 +8,6 @@
     "url": "https://github.com/angular/material2.git"
   },
   "scripts": {
-    "postinstall": "ngc -p angular.tsconfig.json",
     "build": "gulp :publish:build-releases",
     "demo-app": "gulp serve:devapp",
     "test": "gulp test",
@@ -53,6 +52,7 @@
     "@angular/router": "6.0.0",
     "@angular/upgrade": "6.0.0",
     "@bazel/ibazel": "0.3.1",
+    "@bazel/typescript": "^0.16.2",
     "@google-cloud/storage": "^1.1.1",
     "@schematics/angular": "^0.5.12",
     "@types/chalk": "^0.4.31",
