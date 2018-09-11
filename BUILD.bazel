@@ -24,6 +24,7 @@ filegroup(
     "jasmine",
     "minimist",
     "moment",
+    "long",
     "parse5",
     "protobufjs",
     "protractor",
