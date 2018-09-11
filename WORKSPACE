@@ -19,9 +19,10 @@ http_archive(
 # Add Angular rules (e.g. ng_module).
 http_archive(
     name = "angular",
-    url = "https://github.com/angular/angular/archive/6.1.7.zip",
-    strip_prefix = "angular-6.1.7",
-    sha256 = "bd6bd47b8b65254da78158b354c4b0ffc18b9591bcc82863e359fc8d3e1cc609",
+    # Use 6.1.x head (but before Node 10 switch) until 6.1.8 released
+    url = "https://github.com/angular/angular/archive/62f4ea5f0f631bf537ef1f4015c04ad1a3e280bf.zip",
+    strip_prefix = "angular-62f4ea5f0f631bf537ef1f4015c04ad1a3e280bf",
+    sha256 = "d2808d64877b2e5f155777a20963930efa975554945793288518eceff447f3ba",
 )
 
 # Add TypeScript rules. Use local_repository to add the rules from node_modules
@@ -43,7 +44,10 @@ rules_typescript_dependencies()
 # NOTE: this rule installs nodejs, npm, and yarn, but does NOT install
 # your npm dependencies. You must still run the package manager.
 load("@build_bazel_rules_nodejs//:defs.bzl", "node_repositories")
-node_repositories(package_json = ["//:package.json"])
+node_repositories(
+    package_json = ["//:package.json"],
+    preserve_symlinks = False, # TODO: enable hermeticity
+)
 
 load("@io_bazel_rules_sass//sass:sass_repositories.bzl", "sass_repositories")
 sass_repositories()
@@ -57,6 +61,9 @@ check_rules_typescript_version("0.16.0")
 
 load("@angular//:index.bzl", "ng_setup_workspace")
 ng_setup_workspace()
+
+load("@angular_material//tools:mat_setup_workspace.bzl", "mat_setup_workspace")
+mat_setup_workspace()
 
 # This commit matches the version of buildifier in angular/ngcontainer
 # If you change this, also check if it matches the version in the angular/ngcontainer
